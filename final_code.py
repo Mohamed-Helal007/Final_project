@@ -14,6 +14,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from xgboost import XGBClassifier
+import joblib
 
 
 
@@ -39,6 +40,7 @@ df = df.drop(['id'], axis=1)
 le = LabelEncoder()
 for col in ['gender','ever_married','work_type','Residence_type','smoking_status']:
     df[col] = le.fit_transform(df[col])
+joblib.dump(le, "label_encoder.pkl")    
 
 # Clip outliers only for numeric columns
 for i in df.drop(columns=['stroke']):    
@@ -66,6 +68,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 ros = RandomOverSampler(random_state=42)
 X_train_resampled, y_train_resampled = ros.fit_resample(X_train, y_train)
+feature_columns = X.columns.tolist()
+joblib.dump(feature_columns, "feature_columns.pkl")
 #-----------------------------------------------------------------------------------------------------------------------
 #logestic regression Model
 model = LogisticRegression()
@@ -84,6 +88,7 @@ xgb=XGBClassifier(n_estimators=100,learning_rate=0.05,max_depth=3,random_state=4
 xgb.fit(X_train_resampled,y_train_resampled)
 y_pred = xgb.predict(X_test)
 y_pred_train=xgb.predict(X_train_resampled)
+joblib.dump(xgb, "stroke_xgb_model.pkl")
 print("\nXGBoost Classifier Model:\n")
 cm = confusion_matrix(y_test, y_pred)
 print("Accuracy: ", accuracy_score(y_test, y_pred))
@@ -91,6 +96,7 @@ print("Precision:", precision_score(y_test, y_pred, average='macro'))
 print("Recall: ", recall_score(y_test, y_pred, average='macro'))
 print("F1 Score: ", f1_score(y_test, y_pred, average='macro'))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
 #Random Forest Classifier
 rf = RandomForestClassifier(n_estimators=100, random_state=42)
 rf.fit(X_train_resampled, y_train_resampled)
