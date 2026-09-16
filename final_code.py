@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
@@ -18,7 +18,7 @@ import joblib
 
 
 
-df = pd.read_csv('healthcare-dataset-stroke-data-selected-columns.csv')
+df = pd.read_csv('healthcare-stroke-balanced-real-oversampled.csv')
 
 #Data cleaning and preprocessing
 df['gender'].value_counts()
@@ -26,14 +26,14 @@ df['gender'].value_counts()
 df = df[df['gender'] != 'Other']
 df['gender'].value_counts() 
 
-sns.heatmap(df.corr(numeric_only=True), annot=True, cmap='coolwarm')
-plt.show()
+# sns.heatmap(df.corr(numeric_only=True), annot=True, cmap='coolwarm')
+# plt.show()
 
 print(df.isnull().sum())
 print(df.info())
 print(df.describe())
 
-df['bmi'] = df['bmi'].fillna(df['bmi'].mean())
+df['bmi'] = df['bmi'].fillna(df['bmi'].median())
 print(df.isnull().sum())
 
 df = df.drop(['id'], axis=1)
@@ -52,22 +52,19 @@ for i in df.drop(columns=['stroke']):
     df[i] = df[i].clip(lower=min_val, upper=max_val)
 
 
-for i in df.select_dtypes(include=[np.number]).columns:
-    sns.boxplot(x=df[i])
-    plt.title(i)
-    plt.show()
+
 #-----------------------------------------------------------------------------------------------------------------------
 from imblearn.over_sampling import RandomOverSampler
 
 X = df.drop("stroke", axis=1)
 y = df["stroke"]
 
-X_train, X_test, y_train, y_test = train_test_split(
+X_train_resampled, X_test, y_train_resampled, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42,stratify=y
 )
 
-ros = RandomOverSampler(random_state=42)
-X_train_resampled, y_train_resampled = ros.fit_resample(X_train, y_train)
+# ros = RandomOverSampler(random_state=42)
+# X_train_resampled, y_train_resampled = ros.fit_resample(X_train, y_train)
 feature_columns = X.columns.tolist()
 joblib.dump(feature_columns, "feature_columns.pkl")
 #-----------------------------------------------------------------------------------------------------------------------
