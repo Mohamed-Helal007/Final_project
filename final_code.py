@@ -19,6 +19,7 @@ from xgboost import XGBClassifier
 
 df = pd.read_csv('healthcare-dataset-stroke-data-selected-columns.csv')
 
+#Data cleaning and preprocessing
 df['gender'].value_counts()
 
 df = df[df['gender'] != 'Other']
@@ -53,3 +54,16 @@ for i in df.select_dtypes(include=[np.number]).columns:
     sns.boxplot(x=df[i])
     plt.title(i)
     plt.show()
+#-----------------------------------------------------------------------------------------------------------------------
+from imblearn.over_sampling import RandomOverSampler
+
+X = df.drop("stroke", axis=1)
+y = df["stroke"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42,stratify=y
+)
+
+ros = RandomOverSampler(random_state=42)
+X_train_resampled, y_train_resampled = ros.fit_resample(X_train, y_train)
+

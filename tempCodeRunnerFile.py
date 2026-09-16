@@ -1,1 +1,1 @@
-df['bmi'] = df['bmi'].replace("N/A", np.nan).astype(float)
+from imblearn.over_sampling import RandomOverSampler
