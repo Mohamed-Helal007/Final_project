@@ -1,0 +1,1 @@
+df['bmi'] = df['bmi'].replace("N/A", np.nan).astype(float)
