@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
@@ -18,7 +18,7 @@ import joblib
 
 
 
-df = pd.read_csv('healthcare-stroke-balanced-real-oversampled.csv')
+df = pd.read_csv('healthcare-stroke-balanced-synthetic.csv')
 
 #Data cleaning and preprocessing
 df['gender'].value_counts()
@@ -26,14 +26,14 @@ df['gender'].value_counts()
 df = df[df['gender'] != 'Other']
 df['gender'].value_counts() 
 
-sns.heatmap(df.corr(numeric_only=True), annot=True, cmap='coolwarm')
-plt.show()
+# sns.heatmap(df.corr(numeric_only=True), annot=True, cmap='coolwarm')
+# plt.show()
 
 print(df.isnull().sum())
 print(df.info())
 print(df.describe())
 
-df['bmi'] = df['bmi'].fillna(df['bmi'].median())
+df['bmi'] = df['bmi'].fillna(df['bmi'].mean())
 print(df.isnull().sum())
 
 df = df.drop(['id'], axis=1)
@@ -52,10 +52,7 @@ for i in df.drop(columns=['stroke']):
     df[i] = df[i].clip(lower=min_val, upper=max_val)
 
 
-for i in df.select_dtypes(include=[np.number]).columns:
-    sns.boxplot(x=df[i])
-    plt.title(i)
-    plt.show()
+
 #-----------------------------------------------------------------------------------------------------------------------
 from imblearn.over_sampling import RandomOverSampler
 
